@@ -142,7 +142,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:12px}
  .chip{flex:1 1 40%}
 }
 
-.pbtn{margin-left:auto;font-size:12px;padding:6px 12px;border-radius:10px}
+.pbtn+.pbtn{margin-left:0}.ibtn{display:inline-flex;align-items:center;padding:6px 9px}.pbtn{margin-left:auto;font-size:12px;padding:6px 12px;border-radius:10px}
 .top{display:flex;align-items:flex-start;gap:12px}
 dialog.pd{width:min(720px,92vw);max-height:86vh;padding:16px;border:1px solid var(--bd);border-radius:16px;background:var(--s);color:var(--tx)}
 dialog.pd::backdrop{background:rgba(0,0,0,.55)}
@@ -160,11 +160,18 @@ dialog.pd .pa{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
       <span class="span" id="span"></span>
     </div>
     <button type="button" class="pbtn" id="pBtn">Audit prompt</button>
+    <button type="button" class="pbtn ibtn" id="sBtn" title="Save / Load data" aria-label="Save or load data"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></button>
   </header>
   <dialog class="pd" id="pDlg">
     <div class="ph"><span>Space Seller — audit prompt</span><button type="button" id="pClose" aria-label="Close">✕</button></div>
     <textarea id="pTxt" readonly></textarea>
     <div class="pa"><button type="button" id="pCopy">Copy</button></div>
+  </dialog>
+
+  <dialog class="pd" id="sDlg">
+    <div class="ph"><span>Save / Load data</span><button type="button" id="sClose" aria-label="Close">✕</button></div>
+    <textarea id="sTxt" placeholder="Click “Get my code” to copy your data, or paste a code here and click “Load code”." spellcheck="false"></textarea>
+    <div class="pa"><span id="sMsg" style="margin-right:auto;font-size:12px;color:var(--mu);align-self:center"></span><button type="button" id="sGet">Get my code</button><button type="button" id="sCopy">Copy</button><button type="button" id="sLoad">Load code</button></div>
   </dialog>
   <script type="text/plain" id="pSrc">SPACE SELLER — FAST DATE-RANGE AUDIT
 
@@ -518,6 +525,29 @@ fill();render();
     try{await navigator.clipboard.writeText(t.value);ok=true;}catch(e){}
     if(!ok){t.focus();t.select();try{ok=document.execCommand("copy");}catch(e){}}
     c.textContent=ok?"Copied ✓":"Press Ctrl+C";
+  };
+})();
+
+(function(){
+  const d=$("sDlg"),t=$("sTxt"),m=$("sMsg"),P="COD1:";
+  const say=(x,bad)=>{m.textContent=x;m.style.color=bad?"var(--ro)":"var(--gn)";};
+  const enc=o=>P+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+  const dec=c=>{c=c.trim();if(!c.startsWith(P))throw 0;return JSON.parse(decodeURIComponent(escape(atob(c.slice(P.length)))));};
+  const copy=async()=>{let ok=false;try{await navigator.clipboard.writeText(t.value);ok=true;}catch(e){}
+    if(!ok){t.focus();t.select();try{ok=document.execCommand("copy");}catch(e){}}return ok;};
+  $("sBtn").onclick=()=>{t.value="";m.textContent="";d.showModal();};
+  $("sClose").onclick=()=>d.close();
+  d.addEventListener("click",e=>{if(e.target===d)d.close();});
+  $("sGet").onclick=async()=>{t.value=enc({v:1,S:S,FIN:FIN});say(await copy()?"Code copied ✓":"Code ready, press Ctrl+C");};
+  $("sCopy").onclick=async()=>{if(!t.value.trim())return say("Nothing to copy",1);say(await copy()?"Copied ✓":"Press Ctrl+C");};
+  $("sLoad").onclick=()=>{
+    let o;try{o=dec(t.value);if(!o||typeof o.S!=="object")throw 0;}catch(e){return say("Invalid code",1);}
+    const n=Object.assign({},DEF);
+    Object.keys(DEF).forEach(k=>{const v=o.S[k];if(v!==undefined&&typeof v===typeof DEF[k])n[k]=v;});
+    const f=Array.isArray(o.FIN)?o.FIN.filter(x=>x&&typeof x.amount==="number"&&typeof x.date==="string"):[];
+    S=n;FIN=f.map(x=>({id:x.id,date:x.date,note:String(x.note||""),amount:x.amount}));
+    saveFin();fill();render();renderFin();
+    say("Data loaded ✓");
   };
 })();
 </script>
