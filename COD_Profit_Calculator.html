@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calcule</title>
+<style>
+:root{--bg:#f4f6fb;--s:#fff;--s2:#f1f4fa;--bd:#e3e8f2;--tx:#0e1730;--mu:#64718f;--in:#5b5bf0;--gn:#10b981;--am:#f59e0b;--ro:#f43f5e;--sk:#0ea5e9;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0f1f;--s:#111a33;--s2:#18234a;--bd:#25325e;--tx:#e9eeff;--mu:#8e9bc4;--in:#8b8dff;--gn:#34d399;--am:#fbbf24;--ro:#fb7185;--sk:#38bdf8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a0f1f;--s:#111a33;--s2:#18234a;--bd:#25325e;--tx:#e9eeff;--mu:#8e9bc4;--in:#8b8dff;--gn:#34d399;--am:#fbbf24;--ro:#fb7185;--sk:#38bdf8;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:1320px;margin:0 auto;padding:22px 16px 44px;display:grid;gap:24px}
+.sec>h2{margin:0 0 10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);font-weight:700}
+.top{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between}
+.brand{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);font-weight:700}
+.range{font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-top:2px}
+.span{display:inline-block;margin-top:8px;background:color-mix(in srgb,var(--in) 14%,transparent);color:var(--in);font-weight:700;font-size:13px;padding:4px 12px;border-radius:99px}
+.dates{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.dates label{display:grid;gap:4px;font-size:12px;color:var(--mu);font-weight:600}
+input[type=date],button{font:inherit;color:var(--tx);background:var(--s);border:1px solid var(--bd);padding:9px 12px;border-radius:12px}
+button{cursor:pointer;font-weight:700}
+button:hover{border-color:var(--in)}
+:focus-visible{outline:2px solid var(--in);outline-offset:2px}
+.row{display:grid;background:var(--s);border:1px solid var(--bd);border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.row.r11{display:grid;grid-template-columns:2fr 1fr;gap:1px;background:var(--bd)}
+.row.r11 .grp{display:grid;gap:1px;background:var(--bd);min-width:0}
+.row.r11 .grp.gin{grid-template-columns:repeat(4,1fr)}
+.row.r11 .grp.gau{grid-template-columns:repeat(2,1fr)}
+.row.r11 .c{border:0;background:var(--s)}
+.row.r8{grid-template-columns:repeat(8,1fr)}
+.c{min-width:0;display:flex;flex-direction:column;border-right:1px solid var(--bd)}
+.c:last-child{border-right:0}
+.h{display:flex;align-items:center;gap:7px;padding:12px 12px 0;font-size:11.5px;font-weight:700;color:var(--mu);line-height:1.2;min-height:42px}
+.h::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--c)}
+.v{padding:6px 10px 14px;font-weight:800;font-size:clamp(16px,1.55vw,20px);display:flex;align-items:center;min-height:52px}
+.c.auto .v,.chip .v:not(:has(input)),.card strong{padding-left:12px}
+.v input{width:100%;min-width:0;color:var(--tx);font:inherit;padding:8px 10px;border-radius:10px;border:1.5px solid color-mix(in srgb,var(--in) 45%,var(--bd));background:color-mix(in srgb,var(--in) 7%,var(--s));transition:border-color .15s,box-shadow .15s}
+.v input:hover{border-color:var(--in)}
+.v input:focus{outline:0;border-color:var(--in);box-shadow:0 0 0 3px color-mix(in srgb,var(--in) 22%,transparent);background:var(--s)}
+.n{padding:0 12px 12px;font-size:10.5px;color:var(--mu);font-weight:600;min-height:26px}
+.c.auto .v{font-weight:700}
+#data .h{padding:14px 14px 0;font-size:12.5px;min-height:46px}
+#data .v{padding:8px 14px 16px;font-size:clamp(18px,1.7vw,22px)}
+#data .v input{padding:9px 12px}
+#data .c.auto .v{padding-left:28px}
+/* results */
+.res{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:14px}
+.card{border-radius:18px;border:1px solid var(--bd);background:var(--s);padding:20px 22px;display:grid;gap:8px;align-content:center;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.card span{font-size:13px;font-weight:700;color:var(--mu)}
+.card strong{font-size:clamp(26px,3.6vw,40px);letter-spacing:-.03em;line-height:1.1}
+.card.hero{background:linear-gradient(135deg,#059669,#10b981);border:0;color:#fff}
+.card.hero.neg{background:linear-gradient(135deg,#e11d48,#fb7185)}
+.card.hero span{color:rgba(255,255,255,.85)}
+.card.hero strong{font-size:clamp(34px,5.4vw,58px)}
+.card.ss{background:color-mix(in srgb,var(--in) 10%,var(--s))}
+.pos{color:var(--gn)}.neg{color:var(--ro)}
+.tag{background:var(--in);color:#fff;border-radius:99px;padding:0 7px;font-size:9.5px;line-height:16px;margin-left:4px;font-weight:800}
+/* estimate flow */
+.estbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.sw{display:flex;align-items:center;gap:10px;font-weight:700;cursor:pointer}
+.sw input{width:40px;height:22px;accent-color:var(--in);cursor:pointer}
+.sw small{font-weight:500;color:var(--mu);font-size:12px}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin-bottom:10px}
+.chip .v{font-size:clamp(17px,1.7vw,22px)}
+.chip{flex:1;min-width:130px;background:var(--s);border:1px solid var(--bd);border-radius:14px;display:flex;flex-direction:column}
+.chip.key{background:color-mix(in srgb,var(--in) 10%,var(--s));border-color:color-mix(in srgb,var(--in) 35%,var(--bd))}
+.chip.est{background:linear-gradient(135deg,#5b5bf0,#8b5cf6);border:0;color:#fff}
+.chip.est .h{color:rgba(255,255,255,.85)}.chip.est .h::before{background:#fff}
+.chip.est .v{font-size:clamp(18px,2.1vw,26px)}
+.op{flex:0 0 28px;align-self:center;height:28px;border-radius:50%;background:var(--s2);color:var(--mu);display:flex;align-items:center;justify-content:center;font-weight:800;font-style:normal;font-size:15px}
+.warn{color:var(--ro);font-size:13px;font-weight:700}
+/* financing ledger */
+.fin{background:var(--s);border:1px solid var(--bd);border-radius:18px;padding:18px 20px;display:grid;gap:14px}
+.ftop{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.ftop .fl{display:block;font-size:13px;font-weight:700;color:var(--mu)}
+.ftop strong{font-size:clamp(26px,3.4vw,36px);letter-spacing:-.02em;color:var(--gn)}
+.ftop small{color:var(--mu);font-weight:600}
+.fform{display:grid;grid-template-columns:160px 1fr 1.6fr auto;gap:10px;align-items:end}
+.fform label{display:grid;gap:5px;font-size:12px;font-weight:700;color:var(--mu)}
+.fin input{width:100%;min-width:0;font:inherit;font-weight:700;color:var(--tx);padding:10px 12px;border-radius:10px;border:1.5px solid color-mix(in srgb,var(--in) 45%,var(--bd));background:color-mix(in srgb,var(--in) 7%,var(--s))}
+.fin input:hover{border-color:var(--in)}
+.fin input:focus{outline:0;border-color:var(--in);box-shadow:0 0 0 3px color-mix(in srgb,var(--in) 22%,transparent);background:var(--s)}
+.fadd{background:var(--in);color:#fff;border-color:var(--in);padding:11px 22px}
+.fadd:hover{filter:brightness(1.08)}
+.card.inc{border-top:5px solid var(--c)}
+.inc .big{display:flex;align-items:center;gap:8px}
+.inc .big em{font-style:normal;font-weight:800;color:var(--mu)}
+.inc input{width:100%;min-width:0;font:inherit;font-size:clamp(22px,2.6vw,30px);font-weight:800;color:var(--tx);padding:8px 12px;border-radius:12px;border:1.5px solid color-mix(in srgb,var(--in) 45%,var(--bd));background:color-mix(in srgb,var(--in) 7%,var(--s))}
+.inc input:hover{border-color:var(--in)}
+.inc input:focus{outline:0;border-color:var(--in);box-shadow:0 0 0 3px color-mix(in srgb,var(--in) 22%,transparent);background:var(--s)}
+.chip.est.wl{background:linear-gradient(135deg,#059669,#10b981)}
+.chip.est.wl.neg{background:linear-gradient(135deg,#e11d48,#fb7185)}
+.flist{display:grid;border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.frow{display:grid;grid-template-columns:120px 1fr auto 36px;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bd)}
+.frow:last-child{border-bottom:0}
+.frow .fd{font-weight:700}.frow .fn{color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow b{color:var(--gn)}
+.fx{padding:4px 0;width:30px;color:var(--mu);line-height:1}
+.fx:hover{color:var(--ro);border-color:var(--ro)}
+.fempty{padding:14px;color:var(--mu);text-align:center}
+@media(max-width:760px){.fform{grid-template-columns:1fr}.frow{grid-template-columns:96px 1fr auto 34px}}
+/* download-style progress bars */
+.rates{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rate{background:var(--s);border:1px solid var(--bd);border-radius:18px;padding:18px 20px}
+.rate .top2{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.rate .top2 span{font-size:13px;font-weight:700;color:var(--mu)}
+.rate .top2 strong{font-size:clamp(24px,3vw,32px);letter-spacing:-.02em}
+.bar{position:relative;height:14px;margin-top:12px;background:var(--s2);border:1px solid var(--bd);border-radius:99px;overflow:hidden}
+.bar i{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:99px;transition:width .7s cubic-bezier(.2,.8,.2,1),left .7s cubic-bezier(.2,.8,.2,1)}
+.bar .f1{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.3) 0 8px,transparent 8px 16px),var(--g);background-size:22.6px 22.6px,100% 100%;background-position:0 0,0 0;animation:dl 1s linear infinite}
+.bar .f2{background-image:repeating-linear-gradient(45deg,color-mix(in srgb,var(--gc) 55%,transparent) 0 6px,color-mix(in srgb,var(--gc) 22%,transparent) 6px 12px)}
+@keyframes dl{from{background-position:0 0,0 0}to{background-position:22.6px 0,0 0}}
+@media(prefers-reduced-motion:reduce){.bar .f1{animation:none}.bar i{transition:none}}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-top:6px;font-weight:600}
+.rate.d{--g:linear-gradient(90deg,#059669,#34d399);--gc:#10b981}
+.rate.q{--g:linear-gradient(90deg,#059669,#34d399);--gc:#10b981}
+details{background:var(--s);border:1px solid var(--bd);border-radius:16px;padding:12px 18px}
+summary{cursor:pointer;font-weight:700}
+.set{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:12px}
+.set .row{display:block}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}
+th{color:var(--mu);font-size:12px}
+code{font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.sc{overflow-x:auto}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--mu);font-size:12px}
+@media(max-width:1100px){
+ .row.r11{grid-template-columns:1fr}.row.r11 .grp.gin{grid-template-columns:repeat(4,1fr)}.row.r11 .grp.gau{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:1100px){
+ .row.r8{grid-template-columns:repeat(4,1fr)}
+ .row .c{border-bottom:1px solid var(--bd)}
+}
+@media(max-width:760px){
+ .row.r11 .grp.gin,.row.r11 .grp.gau{grid-template-columns:repeat(2,1fr)}
+ .row.r8{grid-template-columns:repeat(2,1fr)}
+ .res,.rates{grid-template-columns:1fr}
+ .flow{flex-wrap:wrap}
+ .chip{flex:1 1 40%}
+}
+
+.pbtn{margin-left:auto;font-size:12px;padding:6px 12px;border-radius:10px}
+.top{display:flex;align-items:flex-start;gap:12px}
+dialog.pd{width:min(720px,92vw);max-height:86vh;padding:16px;border:1px solid var(--bd);border-radius:16px;background:var(--s);color:var(--tx)}
+dialog.pd::backdrop{background:rgba(0,0,0,.55)}
+dialog.pd .ph{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;font-weight:800}
+dialog.pd textarea{width:100%;height:52vh;resize:vertical;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;box-sizing:border-box}
+dialog.pd .pa{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <div class="brand">Calcule · COD profit</div>
+      <div class="range" id="range"></div>
+      <span class="span" id="span"></span>
+    </div>
+    <button type="button" class="pbtn" id="pBtn">Audit prompt</button>
+  </header>
+  <dialog class="pd" id="pDlg">
+    <div class="ph"><span>Space Seller — audit prompt</span><button type="button" id="pClose" aria-label="Close">✕</button></div>
+    <textarea id="pTxt" readonly></textarea>
+    <div class="pa"><button type="button" id="pCopy">Copy</button></div>
+  </dialog>
+  <script type="text/plain" id="pSrc">SPACE SELLER — FAST DATE-RANGE AUDIT
+
+Use the shared browser and complete this read-only audit. Move quickly: use Dashboard as the source for dashboard metrics, Leads only for the three missing order metrics, and inspect only relevant invoices. Do not modify any data.
+
+DATE RANGE
+Start: 2026-10-21 00:00:00
+End: today at execution time. Determine today dynamically and use the same end date everywhere.
+Confirm the displayed/applied date range before using results. Leads must use Order Date (date_order) and 100 results per page.
+
+1) DASHBOARD
+Apply Custom Date from 2026-10-21 through today. Wait for values to refresh and verify the applied range.
+Read:
+- Orders = Leads card
+- Confirmed Orders = Confirmed card (do not use current-status filtering in Leads)
+- Delivered Orders = Delivered card
+- Not Delivered Orders = Not Delivered card
+- Estimated Profit = Incoming Profit / Estimated Profit
+- Pending Amount = Pending under Collected Profit
+Calculate Pending After −472 DH = Pending Amount − 472 DH.
+
+2) LEADS — ONLY THESE METRICS
+Keep the same date range and Order Date filter.
+- Double Orders: apply Double/Duplicate order-status filter and count every matching result.
+- Delivered Pieces and Delivered Sales: filter Delivery Status = DELIVERED; inspect every page. Sum actual quantities for every product line to get pieces. Sum each unique order’s Total once to get sales.
+Do not infer pieces from order counts.
+
+3) INVOICES — UPSELL
+Inspect every invoice covering any part of the date range, including Paid and Pending. Open each relevant invoice and read the Upsell row’s QUANTITY. Avoid duplicate invoices.
+For invoices overlapping the range boundaries, count only upsells attributable to orders dated within the range; verify against the corresponding order records. Do not count the entire invoice just because its dates overlap.
+Upsell Orders = eligible upsell quantities summed.
+Upsell Amount = Upsell Orders × 10 DH.
+Make a genuine attempt to inspect all relevant invoices before marking anything UNVERIFIED.
+
+RULES
+Use only verified values for the exact date range. Never use default, lifetime, or stale values. If a metric cannot be isolated after checking, report UNVERIFIED. Do not invent numbers. Return no process notes or explanations.
+
+OUTPUT EXACTLY:
+Period = 2026-10-21 to YYYY-MM-DD
+
+Orders = X
+
+Confirmed Orders = X
+
+Double Orders = X
+
+Delivered Orders = X
+
+Delivered Pieces = X
+
+Delivered Sales = X DH
+
+Not Delivered Orders = X
+
+Upsell Orders = X
+
+Upsell Amount = X DH
+
+Estimated Profit = X DH
+
+Pending After −472 DH = X DH</script>
+
+  <section class="sec">
+    <h2>Data</h2>
+    <div class="row r11" id="data"></div>
+  </section>
+
+  <section class="sec">
+    <h2>Results</h2>
+    <div class="res">
+      <div class="card hero" id="heroCard"><span>Profites</span><strong id="profit"></strong></div>
+      <div class="card inc" style="--c:var(--gn)"><span>Collected Profit</span><div class="big"><em>DH</em><input type="text" inputmode="decimal" data-k="collected" aria-label="Collected profit"></div></div>
+      <div class="card inc" style="--c:var(--sk)"><span>Incoming Profit</span><div class="big"><em>DH</em><input type="text" inputmode="decimal" data-k="incoming" aria-label="Incoming profit"></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Wealth</h2>
+    <div class="flow">
+      <div class="chip" style="--c:var(--gn)"><div class="h">Collected Profit</div><div class="v" id="w_col"></div></div>
+      <i class="op">+</i>
+      <div class="chip" style="--c:var(--sk)"><div class="h">Incoming Profit</div><div class="v" id="w_inc"></div></div>
+      <i class="op">−</i>
+      <div class="chip" style="--c:var(--am)"><div class="h">Financing received</div><div class="v" id="w_fin"></div></div>
+      <i class="op">=</i>
+      <div class="chip est wl" id="w_chip"><div class="h">Wealth</div><div class="v" id="w_total"></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Estimate · orders still on delivery</h2>
+    <div class="estbar">
+      <label class="sw"><input type="checkbox" id="est"> Est. mode <small>CPD, Delivery Rate and Daily Profit count the expected deliveries</small></label>
+      <span class="warn" id="warn"></span>
+    </div>
+    <div class="flow">
+      <div class="chip" style="--c:var(--in)"><div class="h">Confirmed leads</div><div class="v" id="s_conf"></div></div>
+      <i class="op">−</i>
+      <div class="chip" style="--c:var(--in)"><div class="h">Delivered</div><div class="v" id="s_del"></div></div>
+      <i class="op">−</i>
+      <div class="chip" style="--c:var(--am)"><div class="h">Not delivered</div><div class="v"><input type="text" inputmode="decimal" data-k="notDelivered" aria-label="Not delivered orders"></div></div>
+      <i class="op">=</i>
+      <div class="chip key" style="--c:var(--in)"><div class="h">Still on delivery</div><div class="v" id="s_pend"></div></div>
+    </div>
+    <div class="flow">
+      <div class="chip key" style="--c:var(--in)"><div class="h">Still on delivery</div><div class="v" id="s_pend2"></div></div>
+      <i class="op">×</i>
+      <div class="chip" style="--c:var(--am)"><div class="h">Delivered share %</div><div class="v"><input type="text" inputmode="decimal" data-k="estPct" aria-label="Share delivered percent"></div></div>
+      <i class="op">=</i>
+      <div class="chip key" style="--c:var(--in)"><div class="h">Expected deliveries</div><div class="v" id="s_exp"></div></div>
+      <i class="op">×</i>
+      <div class="chip" style="--c:var(--gn)"><div class="h">PPU</div><div class="v" id="s_ppu"></div></div>
+      <i class="op">=</i>
+      <div class="chip" style="--c:var(--gn)"><div class="h">Extra profit</div><div class="v" id="s_extra"></div></div>
+    </div>
+    <div class="flow">
+      <div class="chip" style="--c:var(--gn)"><div class="h">Current profit</div><div class="v" id="s_cur"></div></div>
+      <i class="op">+</i>
+      <div class="chip" style="--c:var(--gn)"><div class="h">Extra profit</div><div class="v" id="s_extra2"></div></div>
+      <i class="op">=</i>
+      <div class="chip est"><div class="h">Est. Profit</div><div class="v" id="s_est"></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Metrics</h2>
+    <div class="row r8" id="kpi"></div>
+    <div class="rates">
+      <div class="rate d">
+        <div class="top2"><span>Delivery Rate <em class="tag" id="dTag" hidden>est</em></span><strong id="delRate"></strong></div>
+        <div class="bar" role="progressbar" aria-label="Delivery rate"><i class="f1" id="dB1"></i><i class="f2" id="dB2"></i></div>
+        <div class="ticks"><span>0%</span><span id="dSub"></span><span>100%</span></div>
+      </div>
+      <div class="rate q">
+        <div class="top2"><span>Confirmation Rate</span><strong id="confRate"></strong></div>
+        <div class="bar" role="progressbar" aria-label="Confirmation rate"><i class="f1" id="cB1"></i></div>
+        <div class="ticks"><span>0%</span><span id="cSub"></span><span>100%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Financing received</h2>
+    <div class="fin">
+      <div class="ftop"><div><span class="fl">Total received</span><strong id="finTotal"></strong></div><small id="finCount"></small></div>
+      <div class="fform">
+        <label>Date received<input type="date" id="finDate"></label>
+        <label>Amount (DH)<input type="text" inputmode="decimal" id="finAmt" placeholder="1000"></label>
+        <label>Note (optional)<input type="text" id="finNote" placeholder="e.g. advance from the company"></label>
+        <button class="fadd" id="finAdd">Add</button>
+      </div>
+      <div class="warn" id="finWarn"></div>
+      <div class="flist" id="finList"></div>
+    </div>
+  </section>
+
+  <details>
+    <summary>Settings (fixed numbers used by the sheet)</summary>
+    <div class="set" id="set"></div>
+  </details>
+
+  <details>
+    <summary>How it works: formulas</summary>
+    <div class="sc"><table>
+      <thead><tr><th>Cell</th><th>Formula</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>G8</td><td><code>=2*(E8-double)</code></td><td>Entered lead fees = 2 × (orders entered − double orders). Net orders = orders entered − double orders</td></tr>
+        <tr><td>J8</td><td><code>=63*I8</code></td><td>Service fees = 63 × delivered</td></tr>
+        <tr><td>M8</td><td><code>=38*K8</code></td><td>Product cost = 38 × 2piece</td></tr>
+        <tr><td>G14</td><td><code>=F8-G8-J8-M8-N8-L8</code></td><td>Profit = sales − lead fees − service fees − product cost − ads − upsell</td></tr>
+        <tr><td>new</td><td><code>Wealth = collected + incoming − financing received</code></td><td>Collected and incoming profit are typed by hand; financing received is the total of the ledger</td></tr>
+        <tr><td>E22</td><td><code>=N8/E8</code></td><td>CPL = ads ÷ orders entered</td></tr>
+        <tr><td>F22</td><td><code>=N8/H8</code></td><td>CPC = ads ÷ confirmed</td></tr>
+        <tr><td>G22</td><td><code>=N8/I8</code></td><td>CPD = ads ÷ delivered (est. mode: ads ÷ (delivered + expected deliveries))</td></tr>
+        <tr><td>H22</td><td><code>=F8/I8</code></td><td>AOV = sales ÷ delivered</td></tr>
+        <tr><td>I22</td><td><code>=M8/I8</code></td><td>Product cost per delivered order</td></tr>
+        <tr><td>J22</td><td><code>=G14/I8</code></td><td>PPU = profit ÷ delivered</td></tr>
+        <tr><td>K22</td><td><code>=G14/MAX(1,days)</code></td><td>Daily profit (est. mode: est. profit ÷ days)</td></tr>
+        <tr><td>new</td><td><code>still on delivery = MAX(0, H8 − I8 − not delivered)</code></td><td>Orders still on delivery</td></tr>
+        <tr><td>new</td><td><code>Est. = G14 + still on delivery × share % × J22</code></td><td>Est. profit = current profit + expected deliveries × PPU</td></tr>
+        <tr><td>G27</td><td><code>=I8/H8</code></td><td>Delivery rate (est. mode: (delivered + expected) ÷ confirmed)</td></tr>
+        <tr><td>H27</td><td><code>=H8/E8</code></td><td>Confirmation rate = confirmed ÷ orders entered</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+
+  <div class="foot"><span>Your numbers are saved in this browser only.</span><button id="reset">Reset to sheet values</button></div>
+</main>
+
+<script>
+const DEF={start:"2026-10-21",end:"",endAuto:true,est:false,
+ orders:1128,sales:62340,confirmed:591,delivered:324,twoPiece:404,upsell:470,ads:8100,collected:21575,incoming:3974,
+ notDelivered:0,double:0,estPct:40,leadFee:2,serviceFee:63,pieceCost:38};
+let S=Object.assign({},DEF);
+try{const r=localStorage.getItem("calcule-v4");if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+
+const $=id=>document.getElementById(id);
+const num=v=>{const n=parseFloat(String(v).replace(/,/g,""));return isFinite(n)?n:0};
+const div=(a,b)=>b?a/b:0;
+const f0=n=>Math.round(n).toLocaleString("en-US");
+const f1=n=>n.toLocaleString("en-US",{maximumFractionDigits:1});
+const f2=n=>n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const dh=n=>"DH "+f2(n);
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+
+// sheet order, row 7/8: [key,label,type,dot colour,format]
+const COLS=[
+ ["orders","Orders Entered","in","var(--sk)",f0],
+ ["double","Double orders","in","var(--ro)",f0],
+ ["net","Net orders (fee base)","auto","var(--sk)"],
+ ["sales","Sales","in","var(--gn)",f0],
+ ["leadFees","Entered Lead Fees","auto","var(--am)"],
+ ["confirmed","confirmed lead","in","var(--in)",f0],
+ ["delivered","delevered orders","in","var(--in)",f0],
+ ["service","Service Fees","auto","var(--am)"],
+ ["twoPiece","2piece","in","var(--in)",f0],
+ ["upsell","upsell","in","var(--ro)",f0],
+ ["productCost","Product Cost","auto","var(--am)"],
+ ["ads","Ads Cost","in","var(--ro)",f2]
+];
+const FMT={notDelivered:f0,estPct:String,collected:f2,incoming:f2};
+COLS.forEach(c=>{if(c[2]==="in")FMT[c[0]]=c[4]});
+const cell=([k,l,t,c])=>`<div class="c ${t==="auto"?"auto":""}" style="--c:${c}"><div class="h">${l}</div><div class="v">${t==="in"?`<input type="text" inputmode="decimal" data-k="${k}" aria-label="${l}">`:`<span id="${k}"></span>`}</div></div>`;
+$("data").innerHTML=`<div class="grp gin">${COLS.filter(c=>c[2]==="in").map(cell).join("")}</div><div class="grp gau">${COLS.filter(c=>c[2]==="auto").map(cell).join("")}</div>`;
+
+const KPI=[["CPL","var(--sk)"],["CPC","var(--sk)"],["CPD","var(--gn)",1],["AOV","var(--gn)"],["Product cost","var(--am)"],["PPU","var(--gn)"],["Daily Profit","var(--gn)",1],["Est. Profit","var(--in)"]];
+$("kpi").innerHTML=KPI.map(([l,c,t],i)=>`<div class="c" style="--c:${c}"><div class="h">${l}${t?'<em class="tag et" hidden>est</em>':""}</div><div class="v" id="k${i}"></div></div>`).join("");
+
+const SET=[["leadFee","Lead fee per order (DH)"],["serviceFee","Service fee per delivered (DH)"],["pieceCost","Product cost per 2piece (DH)"]];
+$("set").innerHTML=SET.map(([k,l])=>`<div class="row"><div class="c" style="--c:var(--mu)"><div class="h">${l}</div><div class="v"><input type="text" inputmode="decimal" data-s="${k}" aria-label="${l}"></div></div></div>`).join("");
+
+function fill(){
+  document.querySelectorAll("[data-k]").forEach(el=>el.value=FMT[el.dataset.k](S[el.dataset.k]));
+  document.querySelectorAll("[data-s]").forEach(el=>el.value=S[el.dataset.s]);
+  $("est").checked=S.est;
+}
+document.querySelectorAll("[data-k]").forEach(el=>{
+  const k=el.dataset.k;
+  el.addEventListener("input",()=>{S[k]=num(el.value);render();});
+  el.addEventListener("focus",()=>{el.value=S[k];el.select();});
+  el.addEventListener("blur",()=>{el.value=FMT[k](S[k]);});
+});
+document.querySelectorAll("[data-s]").forEach(el=>el.addEventListener("input",()=>{S[el.dataset.s]=num(el.value);render();}));
+$("est").addEventListener("change",()=>{S.est=$("est").checked;render();});
+$("reset").addEventListener("click",()=>{S=Object.assign({},DEF);fill();render();});
+
+function datedif(a,b){
+  const s=new Date(a+"T00:00:00Z"),e=new Date(b+"T00:00:00Z");
+  if(isNaN(s)||isNaN(e)||e<s)return null;
+  const days=Math.round((e-s)/864e5);
+  let m=(e.getUTCFullYear()-s.getUTCFullYear())*12+e.getUTCMonth()-s.getUTCMonth();
+  if(e.getUTCDate()<s.getUTCDate())m--;
+  const a2=new Date(Date.UTC(s.getUTCFullYear(),s.getUTCMonth()+m,s.getUTCDate()));
+  return{days,m,md:Math.round((e-a2)/864e5)};
+}
+const T=(id,v)=>{$(id).textContent=v};
+const clamp=p=>Math.max(0,Math.min(100,p));
+
+function render(){
+  const START="2026-10-21", end=iso(new Date());
+  T("range",`${START} / ${end}`);
+  const dd=datedif(START,end);
+  const days=dd?dd.days:0;
+  T("span",`${days} ${days===1?"day":"days"}`);
+
+  const E=S.orders,F=S.sales,H=S.confirmed,I=S.delivered,K=S.twoPiece,L=S.upsell,N=S.ads,R=S.notDelivered;
+  const net=Math.max(0,E-S.double),G=S.leadFee*net,J=S.serviceFee*I,M=S.pieceCost*K;
+  T("leadFees",f0(G));T("net",f0(net));
+  T("service",f0(J));
+  T("productCost",f0(M));
+
+  const profit=F-G-J-M-N-L;                       // G14
+  T("profit",f2(profit));$("heroCard").className="card hero "+(profit>=0?"pos":"neg");
+  wealth();
+
+  const rawPend=H-I-R, pend=Math.max(0,rawPend);
+  const exp=pend*S.estPct/100;
+  const ppu=div(profit,I);
+  const extra=exp*ppu;
+  const est=profit+extra;
+  T("s_conf",f0(H));T("s_del",f0(I));T("s_pend",f0(pend));T("s_pend2",f0(pend));T("s_exp",f1(exp));
+  T("s_ppu",dh(ppu));T("s_extra",dh(extra));T("s_extra2",dh(extra));T("s_cur",dh(profit));T("s_est",dh(est));
+  T("warn",rawPend<0?"Delivered + not delivered is higher than confirmed leads. Check these numbers.":"");
+
+  const m=S.est, dTot=I+exp;
+  const v=[dh(div(N,E)),dh(div(N,H)),dh(m?div(N,dTot):div(N,I)),dh(div(F,I)),dh(div(M,I)),
+           dh(ppu),dh(div(m?est:profit,Math.max(1,days))),dh(est)];
+  v.forEach((x,i)=>T("k"+i,x));
+  document.querySelectorAll(".et").forEach(t=>t.hidden=!m);
+  $("dTag").hidden=!m;
+
+  // rates + download-style bars
+  const dr=div(I,H)*100, drEst=div(dTot,H)*100, cr=div(H,E)*100;
+  T("delRate",f2(m?drEst:dr)+"%");
+  T("confRate",f2(cr)+"%");
+  $("dB1").style.width=clamp(dr)+"%";
+  $("dB2").style.left=clamp(dr)+"%";
+  $("dB2").style.width=m?clamp(Math.min(drEst,100)-clamp(dr))+"%":"0%";
+  $("cB1").style.width=clamp(cr)+"%";
+  $("dB1").parentNode.setAttribute("aria-valuenow",Math.round(clamp(m?drEst:dr)));
+  $("cB1").parentNode.setAttribute("aria-valuenow",Math.round(clamp(cr)));
+  T("dSub",`${f0(I)} of ${f0(H)} confirmed`+(m?` (+${f1(exp)} expected)`:""));
+  T("cSub",`${f0(H)} of ${f0(E)} entered`);
+
+  try{localStorage.setItem("calcule-v4",JSON.stringify(S));}catch(e){}
+}
+function wealth(){
+  const fin=FIN.reduce((a,x)=>a+x.amount,0);
+  const w=S.collected+S.incoming-fin;
+  T("w_col",dh(S.collected));T("w_inc",dh(S.incoming));T("w_fin",dh(fin));T("w_total",dh(w));
+  $("w_chip").classList.toggle("neg",w<0);
+}
+// financing ledger: every payment received is saved in this browser
+let FIN=[];
+try{const r=localStorage.getItem("calcule-fin-v1");if(r)FIN=JSON.parse(r)||[];}catch(e){}
+const saveFin=()=>{try{localStorage.setItem("calcule-fin-v1",JSON.stringify(FIN));}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function renderFin(){
+  const tot=FIN.reduce((a,x)=>a+x.amount,0);
+  T("finTotal",dh(tot));wealth();
+  T("finCount",`${FIN.length} ${FIN.length===1?"payment":"payments"} received`);
+  const rows=[...FIN].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  $("finList").innerHTML=rows.length?rows.map(x=>`<div class="frow"><span class="fd">${x.date}</span><span class="fn">${esc(x.note)}</span><b>${dh(x.amount)}</b><button class="fx" data-del="${x.id}" aria-label="Delete payment">✕</button></div>`).join(""):`<div class="fempty">No payment yet. Add the first one above.</div>`;
+}
+function addFin(){
+  const amt=num($("finAmt").value);
+  if(!(amt>0)){T("finWarn","Enter an amount above 0.");return;}
+  T("finWarn","");
+  FIN.push({id:Date.now(),date:$("finDate").value||iso(new Date()),amount:amt,note:$("finNote").value.trim()});
+  $("finAmt").value="";$("finNote").value="";
+  saveFin();renderFin();$("finAmt").focus();
+}
+$("finDate").value=iso(new Date());
+$("finAdd").addEventListener("click",addFin);
+["finAmt","finNote"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter")addFin();}));
+$("finList").addEventListener("click",e=>{
+  const b=e.target.closest("[data-del]");if(!b)return;
+  FIN=FIN.filter(x=>String(x.id)!==b.dataset.del);saveFin();renderFin();
+});
+renderFin();
+fill();render();
+
+(function(){
+  const d=document.getElementById("pDlg"),t=document.getElementById("pTxt"),c=document.getElementById("pCopy");
+  t.value=document.getElementById("pSrc").textContent;
+  document.getElementById("pBtn").onclick=()=>{c.textContent="Copy";d.showModal();};
+  document.getElementById("pClose").onclick=()=>d.close();
+  d.addEventListener("click",e=>{if(e.target===d)d.close();});
+  c.onclick=async()=>{
+    let ok=false;
+    try{await navigator.clipboard.writeText(t.value);ok=true;}catch(e){}
+    if(!ok){t.focus();t.select();try{ok=document.execCommand("copy");}catch(e){}}
+    c.textContent=ok?"Copied ✓":"Press Ctrl+C";
+  };
+})();
+</script>
+</body>
+</html>
